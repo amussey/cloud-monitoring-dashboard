@@ -12,3 +12,8 @@ REDIS = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 # Configure some redis defaults
 if not REDIS.get('accounts'):
     REDIS.set('accounts', json.dumps([]))
+
+if not REDIS.get('tokens'):
+    REDIS.set('tokens', json.dumps([]))
+
+
