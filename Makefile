@@ -6,5 +6,5 @@ REVISION := $(shell git rev-parse HEAD)
 default: lint
 
 lint:
-	pep8 dashboard.py utils/
-	pyflakes dashboard.py utils/
+	pep8 dashboard.py config.py utils/
+	pyflakes dashboard.py config.py utils/

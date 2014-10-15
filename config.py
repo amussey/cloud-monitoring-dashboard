@@ -1,1 +1,14 @@
-DEBUG=True
+import os
+import urlparse
+import redis
+import json
+
+DEBUG = True
+
+
+url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
+REDIS = redis.Redis(host=url.hostname, port=url.port, password=url.password)
+
+# Configure some redis defaults
+if not REDIS.get('accounts'):
+    REDIS.set('accounts', json.dumps([]))
