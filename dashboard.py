@@ -1,10 +1,11 @@
 import os
 import json
 import time
+import requests
 from flask import Flask, url_for, render_template, request
 
 import config
-from utils import crossdomain, api
+from utils import crossdomain, api as api_helpers
 
 
 app = Flask(__name__)
@@ -75,13 +76,13 @@ def api_auth(username=None):
     accounts = json.loads(config.REDIS.get('accounts'))
     tokens = json.loads(config.REDIS.get('tokens'))
 
-    tokens = api.expire_tokens(tokens)
+    tokens = api_helpers.expire_tokens(tokens)
 
     if username:
         accounts = [x for x in accounts if x['username'] == username]
 
     for account in accounts:
-        if (not username or account['username'] == username) and not tokens[account['username']]:
+        if (not username or account['username'] == username) and not tokens.get(account['username']):
             url = 'https://identity.api.rackspacecloud.com/v2.0/tokens'
             data = json.dumps({
                 "auth": {
@@ -99,7 +100,7 @@ def api_auth(username=None):
                 tokens[account['username']] = {
                     'token': response_json['access']['token']['id'],
                     'tenant': response_json['access']['token']['tenant']['id'],
-                    'expire': time.time()+(23*60*60)
+                    'expire': int(time.time() + (23 * 60 * 60))
                 }
             else:
                 account["status"] = {
@@ -120,11 +121,18 @@ def api_auth(username=None):
 def api_monitors(username=None):
     # https://monitoring.api.rackspacecloud.com/v1.0/010101/views/overview
     accounts = json.loads(config.REDIS.get('accounts'))
+    tokens = json.loads(config.REDIS.get('tokens'))
 
-    if username:
-        accounts = [x for x in accounts if x['username'] == username]
+    api_auth(username)
 
-    return json.dumps(accounts)
+    for account in accounts:
+        if tokens.get(account['username']) and (not username or account['username'] == username):
+            token = tokens.get(account['username'])
+            url = 'https://monitoring.api.rackspacecloud.com/v1.0/{tenant}/views/overview'.format(tenant=token['tenant'])
+            headers = {'X-Auth-Token': token['token']}
+            response = requests.get(url, headers=headers)
+
+    return '[{}]'.format(response.text)
 
 
 @app.errorhandler(405)
