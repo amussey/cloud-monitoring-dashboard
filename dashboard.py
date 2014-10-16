@@ -14,7 +14,7 @@ app.config.from_pyfile('config.py')
 
 @app.route('/')
 def dashboard():
-    return 'Dashboard'
+    return render_template('index.html')
 
 
 @app.route('/api/v1/')
@@ -78,9 +78,6 @@ def api_auth(username=None):
 
     tokens = api_helpers.expire_tokens(tokens)
 
-    if username:
-        accounts = [x for x in accounts if x['username'] == username]
-
     for account in accounts:
         if (not username or account['username'] == username) and not tokens.get(account['username']):
             url = 'https://identity.api.rackspacecloud.com/v2.0/tokens'
@@ -120,19 +117,39 @@ def api_auth(username=None):
 @crossdomain(origin='*')
 def api_monitors(username=None):
     # https://monitoring.api.rackspacecloud.com/v1.0/010101/views/overview
+    params = request.args.to_dict()
+
     accounts = json.loads(config.REDIS.get('accounts'))
     tokens = json.loads(config.REDIS.get('tokens'))
+    monitors = json.loads(config.REDIS.get('monitors'))
 
     api_auth(username)
 
-    for account in accounts:
-        if tokens.get(account['username']) and (not username or account['username'] == username):
-            token = tokens.get(account['username'])
-            url = 'https://monitoring.api.rackspacecloud.com/v1.0/{tenant}/views/overview'.format(tenant=token['tenant'])
-            headers = {'X-Auth-Token': token['token']}
-            response = requests.get(url, headers=headers)
+    if not 'fast' in params:
+        for account in accounts:
+            current_user = account['username']
+            if tokens.get(current_user) and (not username or current_user == username):
+                token = tokens.get(current_user)
+                url = 'https://monitoring.api.rackspacecloud.com/v1.0/{tenant}/views/overview'.format(tenant=token['tenant'])
+                headers = {'X-Auth-Token': token['token']}
+                response = requests.get(url, headers=headers)
 
-    return '[{}]'.format(response.text)
+                if response.status_code == 200:
+                    monitor_set = api_helpers.clean_monitoring_response(response.json())
+
+                    monitors[current_user] = {
+                        "status": "success",
+                        "last_update": int(time.time()),
+                        "values": monitor_set
+                    }
+        config.REDIS.set('monitors', json.dumps(monitors))
+
+    if username:
+        for key in monitors.keys():
+            if key != username:
+                del monitors[keys]
+
+    return '{}'.format(json.dumps(monitors))
 
 
 @app.errorhandler(405)

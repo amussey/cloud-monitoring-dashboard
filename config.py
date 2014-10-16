@@ -15,3 +15,6 @@ if not REDIS.get('accounts'):
 
 if not REDIS.get('tokens'):
     REDIS.set('tokens', json.dumps({}))
+
+if not REDIS.get('monitors'):
+    REDIS.set('monitors', json.dumps({}))
