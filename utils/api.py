@@ -36,26 +36,30 @@ def clean_monitoring_response(response):
     return response
 
 
-def small_monitoring_response(monitors):
+def small_monitoring_response(monitors, username=None):
     small_monitors = monitors
     for key in small_monitors.keys():
-        for monitor in small_monitors[key]['values']:
-            monitor['server_name'] = monitor['entity']['label']
-            monitor['id'] = monitor['entity']['id']
-            del monitor['entity']
-            status = {'good': 0, 'warning': 0, 'bad': 0}
-            for alarm in monitor['alarms']:
-                del alarm['analyzed_by_monitoring_zone_id']
-                del alarm['timestamp']
-                del alarm['alarm']
-                del alarm['previous_state']
-                del alarm['check']
-                if alarm['state'] == 'OK':
-                    status['good'] += 1
-                elif alarm['state'] == 'WARNING':
-                    status['warning'] += 1
-                elif alarm['state'] == 'CRITICAL':
-                    status['bad'] += 1
-            monitor['status'] = status
+        if username and username != key:
+            del small_monitors[key]
+        else:
+            for monitor in small_monitors[key]['values']:
+                monitor['server_name'] = monitor['entity']['label']
+                monitor['hostname'] = monitor['entity']['agent_id']
+                monitor['id'] = monitor['entity']['id']
+                del monitor['entity']
+                status = {'good': 0, 'warning': 0, 'bad': 0}
+                for alarm in monitor['alarms']:
+                    del alarm['analyzed_by_monitoring_zone_id']
+                    del alarm['timestamp']
+                    del alarm['alarm']
+                    del alarm['previous_state']
+                    del alarm['check']
+                    if alarm['state'] == 'OK':
+                        status['good'] += 1
+                    elif alarm['state'] == 'WARNING':
+                        status['warning'] += 1
+                    elif alarm['state'] == 'CRITICAL':
+                        status['bad'] += 1
+                monitor['status'] = status
 
     return small_monitors

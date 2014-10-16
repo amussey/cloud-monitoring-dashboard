@@ -3,6 +3,11 @@
 <head>
     <title>Monitoring Dashboard</title>
     <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+    {% if username %}
+    <script>
+        var username = "{{ username }}";
+    </script>
+    {% endif %}
 </head>
 <body>
     <h1>Monitoring Dashboard</h1>

@@ -13,8 +13,9 @@ app.config.from_pyfile('config.py')
 
 
 @app.route('/')
-def dashboard():
-    return render_template('index.html')
+@app.route('/<username>')
+def dashboard(username=None):
+    return render_template('index.html', username=username)
 
 
 @app.route('/api/v1/')
@@ -145,7 +146,7 @@ def api_monitors(username=None):
         config.REDIS.set('monitors', json.dumps(monitors))
 
     if 'small' in params:
-        return json.dumps(api_helpers.small_monitoring_response(monitors))
+        return json.dumps(api_helpers.small_monitoring_response(monitors, username))
 
     if username:
         for key in monitors.keys():

@@ -1,20 +1,24 @@
 $(document).ready(function() {
-    $.get("http://localhost:5000/api/v1/monitors/?small", function(data) {
-        // console.debug(data);
+
+    var url = "http://localhost:5000/api/v1/monitors/?small";
+    if (username != undefined) {
+        url = "http://localhost:5000/api/v1/monitors/" + username + "?small";
+    }
+
+    $.get(url, function(data) {
         response = JSON.parse(data);
         keys = Object.keys(response);
 
+        $("#checks").html("");
         keys.forEach(function(entry) {
-            $("#checks").html("");
+            $("#checks").append(
+                "<div style=\"width:100%; height:50px; float:left;\"><h2>" + entry + "</h2></div>");
             for (var i = 0; i < response[entry].values.length; i++) {
-                // console.debug(response[entry].values[i].server_name);
                 $("#checks").append(
-                    "<div style=\"width:500px; height:100px; border: solid 1px #000; float:left;\">\n" +
-                    "    <canvas height=\"100\" width=\"100\" id=\"status-" +
-                    response[entry].values[i].id +
-                    "\"></canvas>\n" +
-                    response[entry].values[i].server_name +
-                    "</div>\n");
+                    "<div style=\"width:200px; height:120px; float:left; font-size:10px; margin-bottom: 20px;\">\n" +
+                    "    <canvas height=\"100\" width=\"100\" id=\"status-" + response[entry].values[i].id + "\" style=\"float:left; margin: 0 50px 0 50px; width:100px; height:100px;\"></canvas>\n" +
+                    "    <div style=\"width:200px; height:20px; float:left;\"><center>" + response[entry].values[i].server_name + /* "<br>" + response[entry].values[i].hostname + */ "</center></div>\n" +
+                    "</div>");
                 drawCircle("status-" + response[entry].values[i].id, response[entry].values[i].alarms.length, response[entry].values[i].status);
             }
         });
