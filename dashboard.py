@@ -144,6 +144,9 @@ def api_monitors(username=None):
                     }
         config.REDIS.set('monitors', json.dumps(monitors))
 
+    if 'small' in params:
+        return json.dumps(api_helpers.small_monitoring_response(monitors))
+
     if username:
         for key in monitors.keys():
             if key != username:

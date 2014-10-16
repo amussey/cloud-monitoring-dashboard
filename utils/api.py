@@ -34,3 +34,28 @@ def clean_monitoring_response(response):
         del server['latest_alarm_states']
 
     return response
+
+
+def small_monitoring_response(monitors):
+    small_monitors = monitors
+    for key in small_monitors.keys():
+        for monitor in small_monitors[key]['values']:
+            monitor['server_name'] = monitor['entity']['label']
+            monitor['id'] = monitor['entity']['id']
+            del monitor['entity']
+            status = {'good': 0, 'warning': 0, 'bad': 0}
+            for alarm in monitor['alarms']:
+                del alarm['analyzed_by_monitoring_zone_id']
+                del alarm['timestamp']
+                del alarm['alarm']
+                del alarm['previous_state']
+                del alarm['check']
+                if alarm['state'] == 'OK':
+                    status['good'] += 1
+                elif alarm['state'] == 'WARNING':
+                    status['warning'] += 1
+                elif alarm['state'] == 'CRITICAL':
+                    status['bad'] += 1
+            monitor['status'] = status
+
+    return small_monitors

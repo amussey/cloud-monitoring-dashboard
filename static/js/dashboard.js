@@ -1,4 +1,28 @@
-function drawCircle(id, cuts, status) {
+$(document).ready(function() {
+    $.get("http://localhost:5000/api/v1/monitors/?small", function(data) {
+        // console.debug(data);
+        response = JSON.parse(data);
+        keys = Object.keys(response);
+
+        keys.forEach(function(entry) {
+            $("#checks").html("");
+            for (var i = 0; i < response[entry].values.length; i++) {
+                // console.debug(response[entry].values[i].server_name);
+                $("#checks").append(
+                    "<div style=\"width:500px; height:100px; border: solid 1px #000; float:left;\">\n" +
+                    "    <canvas height=\"100\" width=\"100\" id=\"status-" +
+                    response[entry].values[i].id +
+                    "\"></canvas>\n" +
+                    response[entry].values[i].server_name +
+                    "</div>\n");
+                drawCircle("status-" + response[entry].values[i].id, response[entry].values[i].alarms.length, response[entry].values[i].status);
+            }
+        });
+    });
+});
+
+
+function drawCircle(id, alerts, status) {
     var canvas = document.getElementById(id);
     if (canvas.getContext) {
 
@@ -10,9 +34,11 @@ function drawCircle(id, cuts, status) {
         var endAngle = Math.PI*2;
         var antiClockwise = false;
 
-        for (var i = 0; i < cuts; i++) {
-            startAngle = 0 + (((Math.PI*2)/cuts)*(i-1));
-            endAngle = ((Math.PI*2)/cuts)*i;
+        var passing_tests = status['good'];
+
+        for (var i = 0; i < alerts; i++) {
+            startAngle = 0 + (((Math.PI*2)/alerts)*(i-1));
+            endAngle = ((Math.PI*2)/alerts)*i;
             
             var color = "#" +
                 Math.floor((Math.random() * 15) + 1).toString(16) +
@@ -37,7 +63,7 @@ function drawCircle(id, cuts, status) {
         var fontHeight = (radius*0.55)
         ctx.font = 'bold ' + fontHeight + 'px Arial';
         ctx.fillStyle = '#000';
-        var txt = cuts + '/' + cuts;
+        var txt = passing_tests + '/' + alerts;
         ctx.fillText(txt, x-ctx.measureText(txt).width/2, y+(fontHeight/3.0));
     }
 }
