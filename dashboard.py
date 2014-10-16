@@ -14,9 +14,13 @@ app.config.from_pyfile('config.py')
 
 @app.route('/')
 @app.route('/<username>')
-def dashboard(username=None):
+def index(username=None):
     return render_template('index.html', username=username)
 
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
 @app.route('/api/v1/')
 @crossdomain(origin='*')
