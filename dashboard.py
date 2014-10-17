@@ -1,8 +1,7 @@
-import os
 import json
 import time
 import requests
-from flask import Flask, url_for, render_template, request
+from flask import Flask, render_template, request
 
 import config
 from utils import crossdomain, api as api_helpers
@@ -10,18 +9,20 @@ from utils import crossdomain, api as api_helpers
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+app.current_threads = 0
 
 
 @app.route('/')
 @app.route('/<username>')
-def index(username=None):
+def dashboard(username=None):
     accounts = json.loads(config.REDIS.get('accounts'))
     return render_template('dashboard.html', accounts=accounts, username=username)
 
 
 @app.route('/settings')
-def dashboard():
-    return 'Settings page'
+def settings(username=None):
+    accounts = json.loads(config.REDIS.get('accounts'))
+    return render_template('settings.html', accounts=accounts, username=username)
 
 
 @app.route('/api/v1/')
@@ -75,7 +76,14 @@ def api_accounts():
         accounts.append(info)
         config.REDIS.set('accounts', json.dumps(accounts))
 
+        for account in accounts:
+            del account['apikey']
+
         return json.dumps(accounts)
+
+    for account in accounts:
+            del account['apikey']
+
     return json.dumps(accounts)
 
 
@@ -119,7 +127,7 @@ def api_auth(username=None):
     config.REDIS.set('tokens', json.dumps(tokens))
     config.REDIS.set('accounts', json.dumps(accounts))
 
-    return json.dumps([accounts, tokens])
+    return json.dumps({'response': 'success', 'message': 'Auth information updated from identity.'})
 
 
 @app.route('/api/v1/monitors/')
@@ -135,7 +143,7 @@ def api_monitors(username=None):
 
     api_auth(username)
 
-    if not 'fast' in params:
+    if 'fast' not in params:
         for account in accounts:
             current_user = account['username']
             if tokens.get(current_user) and (not username or current_user == username):
@@ -160,7 +168,7 @@ def api_monitors(username=None):
     if username:
         for key in monitors.keys():
             if key != username:
-                del monitors[keys]
+                del monitors[key]
 
     return '{}'.format(json.dumps(monitors))
 

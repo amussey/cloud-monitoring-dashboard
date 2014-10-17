@@ -1,6 +1,5 @@
 import time
-import json
-import requests
+
 
 def expire_tokens(tokens):
     for key in tokens.keys():
