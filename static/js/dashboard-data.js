@@ -15,32 +15,21 @@ $(document).ready(function() {
                 '    <h2>' +
                 '        ' + entry +
                 '    </h2>' +
-                '</div>' +
-                '<div class="row" id="user-' + entry + '">' +
                 '</div>');
 
             for (var i = 0; i < response[entry].values.length; i++) {
-                $("#user-" + entry).append('<div class="col-lg-2"><div id="status-' + response[entry].values[i].id + '"></div></div>');
+                if (i % 6 == 0) {
+                    $("#dashboard-panel").append('<div class="row" id="user-' + entry + '-' + parseInt(i / 6) + '"></div>');
+                }
 
-                Morris.Donut({
-                    element: "status-" + response[entry].values[i].id,
-                    data: [{
-                        label: "OK",
-                        value: response[entry].values[i].status.good
-                    }, {
-                        label: "WARNING",
-                        value: response[entry].values[i].status.warning
-                    }, {
-                        label: "CRITICAL",
-                        value: response[entry].values[i].status.bad
-                    }],
-                    resize: true,
-                    colors: [
-                        '#03dc18',
-                        '#f8ff33',
-                        '#ff311b'
-                    ]
-                });
+                $("#user-" + entry + '-' + parseInt(i / 6)).append(
+                    '<div class="col-lg-2">\n' +
+                    '    <canvas id="status-' + response[entry].values[i].id + '"></canvas>\n' +
+                    '    <div class="text-right">\n' +
+                    '        <a href="#">' + response[entry].values[i].server_name.replace('.rackspace.net', '') + ' <i class="fa fa-arrow-circle-right"></i></a>\n' +
+                    '    </div>\n' +
+                    '</div>');
+                statusCircle("status-" + response[entry].values[i].id, response[entry].values[i].status);
             }
         });
     });

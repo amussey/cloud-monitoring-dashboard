@@ -1,30 +1,3 @@
-$(document).ready(function() {
-
-    var url = "http://localhost:5000/api/v1/monitors/?small";
-    // if (username != undefined) {
-    //     url = "http://localhost:5000/api/v1/monitors/" + username + "?small";
-    // }
-
-    $.get(url, function(data) {
-        response = JSON.parse(data);
-        keys = Object.keys(response);
-
-        $("#checks").html("");
-        keys.forEach(function(entry) {
-            $("#checks").append(
-                "<div style=\"width:100%; height:50px; float:left;\"><h2>" + entry + "</h2></div>");
-            for (var i = 0; i < response[entry].values.length; i++) {
-                $("#checks").append(
-                    "<div style=\"width:200px; height:120px; float:left; font-size:10px; margin-bottom: 20px;\">\n" +
-                    "    <div style=\"height:100px; width:100px; margin: 0 50px 0 50px; \"><canvas height=\"100\" width=\"100\" id=\"status-" + response[entry].values[i].id + "\" style=\"float:left; width:100px; height:100px;\"></canvas></div>\n" +
-                    "    <div style=\"width:200px; height:20px; float:left;\"><center>" + response[entry].values[i].server_name + /* "<br>" + response[entry].values[i].hostname + */ "</center></div>\n" +
-                    "</div>");
-                statusCircle("status-" + response[entry].values[i].id, response[entry].values[i].status);
-            }
-        });
-    });
-});
-
 
 function statusCircle(id, status) {
     if (status.good == undefined) {
