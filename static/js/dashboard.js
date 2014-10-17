@@ -1,8 +1,8 @@
 $(document).ready(function() {
 
-    var url = "http://localhost:5000/api/v1/monitors/?small";
+    var url = "/api/v1/monitors/?small";
     if (username != undefined) {
-        url = "http://localhost:5000/api/v1/monitors/" + username + "?small";
+        url = "/api/v1/monitors/" + username + "?small";
     }
 
     $.get(url, function(data) {
