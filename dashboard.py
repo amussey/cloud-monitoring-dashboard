@@ -15,12 +15,14 @@ app.config.from_pyfile('config.py')
 @app.route('/')
 @app.route('/<username>')
 def index(username=None):
-    return render_template('index.html', username=username)
+    accounts = json.loads(config.REDIS.get('accounts'))
+    return render_template('dashboard.html', accounts=accounts, username=username)
 
 
-@app.route('/dashboard')
+@app.route('/settings')
 def dashboard():
-    return render_template('dashboard.html')
+    return 'Settings page'
+
 
 @app.route('/api/v1/')
 @crossdomain(origin='*')
@@ -60,14 +62,17 @@ def api_accounts():
             return json.dumps({'response': 'error', 'message': "Missing 'username' field."}), 403
         if not params.get('apikey'):
             return json.dumps({'response': 'error', 'message': "Missing 'apikey' field."}), 403
-        accounts.append({
+        info = {
             'username': params.get('username'),
             'apikey': params.get('apikey'),
             'status': {
                 'enabled': True,
                 'message': 'Enabled'
             }
-        })
+        }
+        if params.get('alias'):
+            info['alias'] = params.get('alias')
+        accounts.append(info)
         config.REDIS.set('accounts', json.dumps(accounts))
 
         return json.dumps(accounts)

@@ -1,21 +1,23 @@
 $(document).ready(function() {
 
     var url = "http://localhost:5000/api/v1/monitors/?small";
-    // if (username != undefined) {
-    //     url = "http://localhost:5000/api/v1/monitors/" + username + "?small";
-    // }
+    if (username != undefined) {
+        url = "http://localhost:5000/api/v1/monitors/" + username + "?small";
+    }
 
     $.get(url, function(data) {
         response = JSON.parse(data);
         keys = Object.keys(response);
 
         keys.forEach(function(entry) {
-            $("#dashboard-panel").append(
-                '<div class="row">' +
-                '    <h2>' +
-                '        ' + entry +
-                '    </h2>' +
-                '</div>');
+            if (username == undefined) {
+                $("#dashboard-panel").append(
+                    '<div class="row">' +
+                    '    <h2>' +
+                    '        ' + entry +
+                    '    </h2>' +
+                    '</div>');
+            }
 
             for (var i = 0; i < response[entry].values.length; i++) {
                 if (i % 6 == 0) {
@@ -26,7 +28,7 @@ $(document).ready(function() {
                     '<div class="col-lg-2">\n' +
                     '    <canvas id="status-' + response[entry].values[i].id + '"></canvas>\n' +
                     '    <div class="text-right">\n' +
-                    '        <a href="#">' + response[entry].values[i].server_name.replace('.rackspace.net', '') + ' <i class="fa fa-arrow-circle-right"></i></a>\n' +
+                    '        <a href="#">' + response[entry].values[i].server_name + ' <i class="fa fa-arrow-circle-right"></i></a>\n' +
                     '    </div>\n' +
                     '</div>');
                 statusCircle("status-" + response[entry].values[i].id, response[entry].values[i].status);
