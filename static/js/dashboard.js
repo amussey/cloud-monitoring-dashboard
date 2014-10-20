@@ -1,42 +1,48 @@
 $(document).ready(function() {
+    refreshMonitors();
+    window.setInterval(refreshMonitors, 60000);
+});
 
+function refreshMonitors() {
     var url = "/api/v1/monitors?small";
     if (username != undefined) {
         url = "/api/v1/monitors/" + username + "?small";
     }
-
     $.get(url, function(data) {
         response = JSON.parse(data);
         keys = Object.keys(response);
 
-        keys.forEach(function(entry) {
-            if (username == undefined) {
-                $("#dashboard-panel").append(
-                    '<div class="row">' +
-                    '    <h2>' +
-                    '        ' + entry +
-                    '    </h2>' +
-                    '</div>');
+        keys.forEach(function(user) {
+            if ($('#user-' + user + '-header').length == 0) {
+                if (username == undefined) {
+                    $("#dashboard-panel").append(
+                        '<div class="row" id="user-' + user + '-header">' +
+                        '    <h2>' +
+                        '        ' + user +
+                        '    </h2>' +
+                        '</div>');
+                }
+                $("#dashboard-panel").append('<div class="row" id="user-' + user + '"></div>');
             }
-
-            $("#dashboard-panel").append('<div class="row" id="user-' + entry + '"></div>');
-            for (var i = 0; i < response[entry].values.length; i++) {
-                // if (i % 6 == 0) {
-                //     $("#dashboard-panel").append('<div class="row" id="user-' + entry + '-' + parseInt(i / 6) + '"></div>');
-                // }
-
-                // $("#user-" + entry + '-' + parseInt(i / 6)).append(
-                $("#user-" + entry).append(
-                    '<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4">\n' +
-                    '    <a href="#" title="' + response[entry].values[i].server_name + '"><div style="width:100%;">\n' +
-                    '        <canvas id="status-' + response[entry].values[i].id + '"></canvas>\n' +
-                    '    </div></a>\n' +
-                    '    <!-- <div class="text-right">\n' +
-                    '        <a href="#">' + response[entry].values[i].server_name + ' <i class="fa fa-arrow-circle-right"></i></a>\n' +
-                    '    </div> -->\n' +
-                    '</div>');
-                statusCircle("status-" + response[entry].values[i].id, response[entry].values[i].status, true);
-            }
+            renderMonitors(user, response[user]);
         });
     });
-});
+}
+
+function renderMonitors(user, alarms) {
+    var id = "#user-" + user;
+    console.debug("Refreshing " + user + "'s servers...");
+    $(id).empty();
+    for (var i = 0; i < alarms.values.length; i++) {
+        $(id).append(
+            '<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4 status-circle">\n' +
+            '    <a href="#" title="' + alarms.values[i].server_name + '"><div style="width:100%;">\n' +
+            '        <canvas id="status-' + alarms.values[i].id + '"></canvas>\n' +
+            '    </div></a>\n' +
+            '    <!-- <div class="text-right">\n' +
+            '        <a href="#">' + alarms.values[i].server_name + ' <i class="fa fa-arrow-circle-right"></i></a>\n' +
+            '    </div> -->\n' +
+            '</div>');
+        statusCircle("status-" + alarms.values[i].id, alarms.values[i].status, true);
+    }
+}

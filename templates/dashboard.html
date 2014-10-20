@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Cloud Monitoring Dashboard {% if username %} - {{ username }}{% endif %}{% endblock %}
-{% block css %}{% endblock %}
+{% block css %}
+<style>
+    .status-circle {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
 {% block content %}
             <div class="container-fluid" id="dashboard-panel">
 
