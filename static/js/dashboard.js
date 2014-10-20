@@ -2,7 +2,7 @@ $(document).ready(function() {
 
     var url = "/api/v1/monitors?small";
     if (username != undefined) {
-        url = "/api/v1/monitors" + username + "?small";
+        url = "/api/v1/monitors/" + username + "?small";
     }
 
     $.get(url, function(data) {
@@ -27,7 +27,7 @@ $(document).ready(function() {
 
                 // $("#user-" + entry + '-' + parseInt(i / 6)).append(
                 $("#user-" + entry).append(
-                    '<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4">\n' +
+                    '<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4">\n' +
                     '    <a href="#" title="' + response[entry].values[i].server_name + '"><div style="width:100%;">\n' +
                     '        <canvas id="status-' + response[entry].values[i].id + '"></canvas>\n' +
                     '    </div></a>\n' +
@@ -35,7 +35,7 @@ $(document).ready(function() {
                     '        <a href="#">' + response[entry].values[i].server_name + ' <i class="fa fa-arrow-circle-right"></i></a>\n' +
                     '    </div> -->\n' +
                     '</div>');
-                statusCircle("status-" + response[entry].values[i].id, response[entry].values[i].status);
+                statusCircle("status-" + response[entry].values[i].id, response[entry].values[i].status, true);
             }
         });
     });

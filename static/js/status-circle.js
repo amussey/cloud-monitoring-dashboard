@@ -1,5 +1,6 @@
 
-function statusCircle(id, status) {
+function statusCircle(id, status, width_priority) {
+    width_priority = typeof width_priority !== 'undefined' ? width_priority : false;
     if (status.good == undefined) {
         status.good = 0;
     }
@@ -10,14 +11,14 @@ function statusCircle(id, status) {
         status.bad = 0;
     }
 
-    window.addEventListener("resize", function(){ drawCircle(id, status); }, false);
-    drawCircle(id, status);
+    window.addEventListener("resize", function(){ drawCircle(id, status, width_priority); }, false);
+    drawCircle(id, status, width_priority);
 }
 
-function drawCircle(id, status) {
+function drawCircle(id, status, width_priority) {
     var canvas = document.getElementById(id);
-    canvas.width = canvas.parentElement.offsetWidth
-    canvas.height = canvas.parentElement.offsetHeight
+    canvas.width = canvas.parentElement.offsetWidth;
+    canvas.height = (width_priority ? canvas.parentElement.offsetWidth : canvas.parentElement.offsetHeight);
 
 
     if (canvas.getContext) {
