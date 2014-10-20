@@ -54,19 +54,8 @@
                         <a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
                     <li>
-                        <a href="javascript:;" data-toggle="collapse" data-target="#demo" id="users-dropdown"><i class="fa fa-fw fa-table"></i> Users <i class="fa fa-fw fa-caret-down"></i></a>
-                        <ul id="demo" class="collapse">
-                            {% for account in accounts %}
-                            <li>
-                                <a href="/{{ account.username }}">
-                                {% if account.alias %}
-                                    {{ account.alias }}
-                                {% else %}
-                                    {{ account.username }}
-                                {% endif %}
-                                </a>
-                            </li>
-                            {% endfor %}
+                        <a href="javascript:;" data-toggle="collapse" data-target="#nav-accounts-dropdown" id="users-dropdown"><i class="fa fa-fw fa-table"></i> Users <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul class="collapse" id="nav-accounts-dropdown">
                         </ul>
                     </li>
                     <li>

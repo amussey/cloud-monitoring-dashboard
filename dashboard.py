@@ -1,7 +1,7 @@
 import json
 import time
 import requests
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 import config
 from utils import crossdomain, api as api_helpers
@@ -15,29 +15,20 @@ app.current_threads = 0
 @app.route('/')
 @app.route('/<username>')
 def dashboard(username=None):
-    accounts = json.loads(config.REDIS.get('accounts'))
-    return render_template('dashboard.html', accounts=accounts, username=username)
+    return render_template('dashboard.html', username=username)
 
 
 @app.route('/settings')
 def settings(username=None):
-    accounts = json.loads(config.REDIS.get('accounts'))
-    return render_template('settings.html', accounts=accounts, username=username)
+    return render_template('settings.html', username=username)
 
 
 @app.route('/api/v1/')
-@crossdomain(origin='*')
 def api():
-    return json.dumps({
-        'endpoints': [
-            '/api/v1/accounts/',
-            '/api/v1/auth/',
-            '/api/v1/monitors/'
-        ]
-    })
+    return redirect(url_for('dashboard'))
 
 
-@app.route('/api/v1/accounts/', methods=['GET', 'POST', 'DELETE'])
+@app.route('/api/v1/accounts', methods=['GET', 'POST', 'DELETE'])
 @crossdomain(origin='*')
 def api_accounts():
     accounts = json.loads(config.REDIS.get('accounts'))
@@ -87,7 +78,7 @@ def api_accounts():
     return json.dumps(accounts)
 
 
-@app.route('/api/v1/auth/')
+@app.route('/api/v1/auth')
 @app.route('/api/v1/auth/<username>')
 @crossdomain(origin='*')
 def api_auth(username=None):
@@ -130,7 +121,7 @@ def api_auth(username=None):
     return json.dumps({'response': 'success', 'message': 'Auth information updated from identity.'})
 
 
-@app.route('/api/v1/monitors/')
+@app.route('/api/v1/monitors')
 @app.route('/api/v1/monitors/<username>')
 @crossdomain(origin='*')
 def api_monitors(username=None):
