@@ -4,6 +4,8 @@ A dashboard for Rackspace's Cloud Monitoring.   See the statuses of the alerts o
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/amussey/cloud-monitoring-dashboard)
 
+![](https://raw.githubusercontent.com/amussey/cloud-monitoring-dashboard/master/static/images/screenshot-dashboard.png)
+
 ## Launching on Heroku
 
 ```bash
