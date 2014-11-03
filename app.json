@@ -1,0 +1,17 @@
+{
+    "name": "Cloud Monitoring Dashboard",
+    "description": "A dashboard to let you see the statuses of the alerts on all of your Rackspace cloud properties.",
+    "website": "https://github.com/amussey/cloud-monitoring-dashboard",
+    "repository": "https://github.com/amussey/cloud-monitoring-dashboard",
+    "logo": "https://raw.githubusercontent.com/amussey/cloud-monitoring-dashboard/master/static/images/logo-1024.png",
+    "success_url": "/",
+    "keywords": [
+        "rackspace",
+        "cloud monitoring",
+        "dashboard"
+    ],
+    "addons": [
+        "rediscloud"
+    ],
+    "generator": "https://www.expeditedssl.com/heroku-button-maker"
+}
