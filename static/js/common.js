@@ -16,3 +16,9 @@ $(document).on("accounts-ready", function(e, data) {
             '</li>\n');
     }
 });
+
+if ( !String.prototype.contains ) {
+    String.prototype.contains = function() {
+        return String.prototype.indexOf.apply( this, arguments ) !== -1;
+    };
+}
