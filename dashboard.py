@@ -23,6 +23,13 @@ def settings(username=None):
     return render_template('settings.html', username=username)
 
 
+@app.route('/<username>/<server_id>')
+def server(username=None, server_id=None):
+    if not server_id:
+        return dashboard(username=username)
+    return render_template('server.html', username=username, server_id=server_id)
+
+
 @app.route('/api/v1/')
 def api():
     return redirect(url_for('dashboard'))
@@ -147,9 +154,9 @@ def api_monitors(username=None):
                     monitor_set = api_helpers.clean_monitoring_response(response.json())
 
                     monitors[current_user] = {
-                        "status": "success",
-                        "last_update": int(time.time()),
-                        "values": monitor_set
+                        'status': 'success',
+                        'last_update': int(time.time()),
+                        'values': monitor_set
                     }
         config.REDIS.set('monitors', json.dumps(monitors))
 
@@ -161,7 +168,29 @@ def api_monitors(username=None):
             if key != username:
                 del monitors[key]
 
-    return '{}'.format(json.dumps(monitors))
+    return json.dumps(monitors)
+
+
+@app.route('/api/v1/monitors/<username>/<server_id>')
+@crossdomain(origin='*')
+def api_server(username=None, server_id=None):
+    if not server_id:
+        return api_monitors(username=username)
+
+    monitors = json.loads(config.REDIS.get('monitors'))
+
+    if username not in monitors:
+        return json.dumps({'response': 'error', 'message': "User with this username not found."}), 403
+
+    for monitor in monitors[username]['values']:
+        if monitor['entity']['id'] == server_id:
+            return json.dumps({
+                'response': 'success',
+                'message': 'Server information retrieved successfully.',
+                'data': monitor
+            })
+
+    return json.dumps({'response': 'error', 'message': "Server with 'server_id' not found."}), 403
 
 
 @app.errorhandler(405)

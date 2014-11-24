@@ -35,8 +35,8 @@ function renderMonitors(user, alarms) {
     $(id).empty();
     for (var i = 0; i < alarms.values.length; i++) {
         $(id).append(
-            '<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4 status-circle">\n' +
-            '    <a href="#" title="' + alarms.values[i].server_name + '"><div style="width:100%;">\n' +
+            '<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4 status-circle" server_name="' + user + ' ' + alarms.values[i].server_name + '">\n' +
+            '    <a href="/' + user + '/' + alarms.values[i].id + '" title="' + alarms.values[i].server_name + '"><div style="width:100%;">\n' +
             '        <canvas id="status-' + alarms.values[i].id + '"></canvas>\n' +
             '    </div></a>\n' +
             '    <!-- <div class="text-right">\n' +
