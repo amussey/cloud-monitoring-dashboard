@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Server | Cloud Monitoring Dashboard{% endblock %}
+{% block css %}
+<style>
+    .remove-icon {
+        color:#B22020;
+    }
+</style>
+{% endblock %}
+{% block content %}
+            <div class="container-fluid" id="dashboard-panel">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Server - {{ server_id }}
+                        </h1>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+            </div>
+            <!-- /.container-fluid -->
+{% endblock %}
+{% block js %}
+    <script src="{{ url_for('static', filename='js/server.js') }}"></script>
+{% endblock %}
