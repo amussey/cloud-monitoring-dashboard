@@ -27,7 +27,7 @@ def settings(username=None):
 def server(username=None, server_id=None):
     if not server_id:
         return dashboard(username=username)
-    return render_template('server.html', server_id=server_id)
+    return render_template('server.html', username=username, server_id=server_id)
 
 
 @app.route('/api/v1/')
@@ -168,7 +168,7 @@ def api_monitors(username=None):
             if key != username:
                 del monitors[key]
 
-    return '{}'.format(json.dumps(monitors))
+    return json.dumps(monitors)
 
 
 @app.route('/api/v1/monitors/<username>/<server_id>')
@@ -184,10 +184,10 @@ def api_server(username=None, server_id=None):
 
     for monitor in monitors[username]['values']:
         if monitor['entity']['id'] == server_id:
-            return '{}'.format({
+            return json.dumps({
                 'response': 'success',
                 'message': 'Server information retrieved successfully.',
-                'data': json.dumps(monitor)
+                'data': monitor
             })
 
     return json.dumps({'response': 'error', 'message': "Server with 'server_id' not found."}), 403

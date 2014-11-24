@@ -223,3 +223,20 @@ ul.alert-dropdown {
 .panel-yellow a:hover {
     color: #df8a13;
 }
+
+.alarm-state-OK {
+    color: #0B8000;
+}
+
+.alarm-state-WARNING {
+    color: #C3C900;
+}
+
+.alarm-state-CRITICAL {
+    color: #C90000;
+}
+
+.alarm-state {
+    font-weight: bold;
+    font-size: 20px;
+}

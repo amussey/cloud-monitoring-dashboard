@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Server | Cloud Monitoring Dashboard{% endblock %}
-{% block css %}
-<style>
-    .remove-icon {
-        color:#B22020;
-    }
-</style>
-{% endblock %}
+{% block css %}{% endblock %}
 {% block content %}
             <div class="container-fluid" id="dashboard-panel">
 
@@ -14,15 +8,33 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Server - {{ server_id }}
+                            <span id="server-name">Server {{ server_id }}</span>
+                            <a href="/{{ username }}"><small>{{ username }}</small></a>
                         </h1>
                     </div>
                 </div>
                 <!-- /.row -->
 
+                <div class="row">
+                    <h2>Monitors</h2>
+                </div>
+                <table class="table" id="current-alarms">
+                    <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                </table>
+
             </div>
             <!-- /.container-fluid -->
 {% endblock %}
 {% block js %}
+    <script>
+        var username = "{{ username }}";
+        var server_id = "{{ server_id }}";
+    </script>
     <script src="{{ url_for('static', filename='js/server.js') }}"></script>
 {% endblock %}
