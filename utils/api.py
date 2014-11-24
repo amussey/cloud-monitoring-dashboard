@@ -1,11 +1,14 @@
 import time
+import requests
 
 
 def expire_tokens(tokens):
     for key in tokens.keys():
         ttl = tokens[key]['expire'] - time.time()
         if ttl < 0:
-            # make a call to invalidate the token
+            requests.request(method='DELETE',
+                             url='https://identity.api.rackspacecloud.com/v2.0/tokens/{}'.format(tokens[key]['token']),
+                             headers={'X-Auth-Token': tokens[key]['token']})
 
             del tokens[key]
     return tokens
