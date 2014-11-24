@@ -12,6 +12,8 @@ function refreshMonitors() {
         response = JSON.parse(data);
         keys = Object.keys(response);
 
+        $("#sonic-loader").remove();
+
         keys.forEach(function(user) {
             if ($('#user-' + user + '-header').length == 0) {
                 if (username == undefined) {
