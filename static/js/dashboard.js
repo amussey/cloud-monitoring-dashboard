@@ -33,6 +33,7 @@ function refreshMonitors() {
             }
             renderMonitors(user, response[user]);
         });
+        filterMonitors($("#search-bar").val());
     });
 }
 
@@ -55,16 +56,26 @@ function renderMonitors(user, alarms) {
 }
 
 function filterMonitors(search) {
-    console.debug(search);
-    $( ".status-circle" ).each(function( index ) {
-        console.log( $(this).attr("server_name") );
-        var searchList = search.split(" ");
-        for (var i = 0; i < searchList.length; i++) {
-            if (!$(this).attr("server_name").contains(searchList[i])) {
-                $(this).css("display", "none");
-                break;
+    console.debug("Filtering for: " + search);
+
+    search = search.trim();
+    if (search == "") {
+        $( ".status-circle" ).each(function( index ) {
+            $(this).show();
+        });
+    } else {
+        $( ".status-circle" ).each(function( index ) {
+            $(this).hide();
+        });
+
+        $( ".status-circle" ).each(function( index ) {
+            var searchList = search.split(" ");
+            for (var i = 0; i < searchList.length; i++) {
+                if ($(this).attr("server_name").contains(searchList[i])) {
+                    $(this).show();
+                }
             }
-            $(this).css("display", "inline");
-        }
-    });
+        });
+    }
+    $(window).trigger('resize');
 }

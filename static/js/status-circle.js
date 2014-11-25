@@ -11,12 +11,14 @@ function statusCircle(id, status, width_priority) {
         status.bad = 0;
     }
 
-    window.addEventListener("resize", function(){ drawCircle(id, status, width_priority); }, false);
+    $(window).resize(function(){ drawCircle(id, status, width_priority); });
     drawCircle(id, status, width_priority);
 }
 
 function drawCircle(id, status, width_priority) {
     var canvas = document.getElementById(id);
+    if (canvas.offsetParent === null) return; // Check to see if the element is visible.
+
     canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = (width_priority ? canvas.parentElement.offsetWidth : canvas.parentElement.offsetHeight);
 
