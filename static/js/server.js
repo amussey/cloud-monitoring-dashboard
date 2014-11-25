@@ -15,7 +15,6 @@ $.ajax({
             data.alarms[i].state,
             data.alarms[i].alarm.label,
             data.alarms[i].status);
-        console.debug(data.alarms[i].status);
     }
 }).fail(function() {
     window.location.href = "/" + username;

@@ -1,6 +1,11 @@
 $(document).ready(function() {
     refreshMonitors();
     window.setInterval(refreshMonitors, 60000);
+
+    $("#search-bar").change(function() {
+        console.debug("Changed!");
+        filterMonitors($("#search-bar").val());
+    });
 });
 
 function refreshMonitors() {
@@ -28,6 +33,7 @@ function refreshMonitors() {
             }
             renderMonitors(user, response[user]);
         });
+        filterMonitors($("#search-bar").val());
     });
 }
 
@@ -47,4 +53,29 @@ function renderMonitors(user, alarms) {
             '</div>');
         statusCircle("status-" + alarms.values[i].id, alarms.values[i].status, true);
     }
+}
+
+function filterMonitors(search) {
+    console.debug("Filtering for: " + search);
+
+    search = search.trim();
+    if (search == "") {
+        $( ".status-circle" ).each(function( index ) {
+            $(this).show();
+        });
+    } else {
+        $( ".status-circle" ).each(function( index ) {
+            $(this).hide();
+        });
+
+        $( ".status-circle" ).each(function( index ) {
+            var searchList = search.split(" ");
+            for (var i = 0; i < searchList.length; i++) {
+                if ($(this).attr("server_name").contains(searchList[i])) {
+                    $(this).show();
+                }
+            }
+        });
+    }
+    $(window).trigger('resize');
 }

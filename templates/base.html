@@ -29,6 +29,22 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <style>
+    .right-inner-addon {
+        position: relative;
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
+    .right-inner-addon input {
+        padding-right: 30px;
+    }
+    .right-inner-addon i {
+        position: absolute;
+        right: 0px;
+        padding: 10px 12px;
+        pointer-events: none;
+    }
+    </style>
 </head>
 
 <body>
@@ -47,6 +63,8 @@
                 </button>
                 <a class="navbar-brand" href="/">Cloud Monitoring Dashboard</a>
             </div>
+            {% block right_nav %}{% endblock %}
+
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
