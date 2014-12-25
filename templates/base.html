@@ -29,22 +29,6 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style>
-    .right-inner-addon {
-        position: relative;
-        margin-top: 8px;
-        margin-bottom: 4px;
-    }
-    .right-inner-addon input {
-        padding-right: 30px;
-    }
-    .right-inner-addon i {
-        position: absolute;
-        right: 0px;
-        padding: 10px 12px;
-        pointer-events: none;
-    }
-    </style>
 </head>
 
 <body>
@@ -76,6 +60,7 @@
                         <ul class="collapse" id="nav-accounts-dropdown">
                         </ul>
                     </li>
+                    {% block left_nav %}{% endblock %}
                     <li>
                         <a href="/settings"><i class="fa fa-fw fa-wrench"></i> Settings</a>
                     </li>
@@ -98,6 +83,7 @@
     <script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/rehash.min.js') }}"></script>
     {% block js %}{% endblock %}
 </body>
 </html>

@@ -1,4 +1,18 @@
 $(document).ready(function() {
+    $.get("/api/v1/filters", function(data) {
+        $(document).trigger("filters-ready", data);
+    });
+
+    if (parent.location.rehash['filter'] != undefined) {
+        $("#search-bar").val(parent.location.rehash['filter']);
+    }
+    parent.addEventListener('rehash', function (e) {
+        if (parent.location.rehash['filter'] != undefined) {
+            $("#search-bar").val(parent.location.rehash['filter']);
+            filterMonitors($("#search-bar").val());
+        }
+    }, false);
+
     refreshMonitors();
     window.setInterval(refreshMonitors, 60000);
 
@@ -6,6 +20,28 @@ $(document).ready(function() {
         console.debug("Changed!");
         filterMonitors($("#search-bar").val());
     });
+
+});
+
+$(document).on("filters-ready", function(e, data) {
+    if ($("#filters-dropdown").prop("open") == undefined || !$("#filters-dropdown").prop("open")) {
+        $("#filters-dropdown").prop("open", true);
+        $("#filters-dropdown").click();
+    }
+
+    data = JSON.parse(data);
+    if (data.response == "success") {
+        data = data.data;
+        $("#nav-filters-dropdown").html("");
+        for (var i = 0; i < data.length; i++) {
+            $("#nav-filters-dropdown").append(
+                '<li>\n' +
+                '    <a href="#filter=' + encodeURI(data[i]) + '">\n' +
+                '        ' + data[i] + '\n' +
+                '    </a>\n' +
+                '</li>\n');
+        }
+    }
 });
 
 function refreshMonitors() {
@@ -79,3 +115,17 @@ function filterMonitors(search) {
     }
     $(window).trigger('resize');
 }
+
+$("#filter-save-btn").on("click", function(e) {
+    $("#search-bar").prop("disabled", true);
+
+    $.post( "/api/v1/filters", { filter: $("#search-bar").val() }, function(data) {
+        // Re-enable the buttons
+        $("#search-bar").prop("disabled", false);
+
+        $.get("/api/v1/filters", function(data) {
+            $(document).trigger("filters-ready", data);
+        })
+
+    });
+});

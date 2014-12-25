@@ -5,7 +5,10 @@ $(document).ready(function() {
 });
 
 $(document).on("accounts-ready", function(e, data) {
-    $("#users-dropdown").click();
+    if ($("#users-dropdown").prop("open") == undefined || !$("#users-dropdown").prop("open")) {
+        $("#users-dropdown").prop("open", true);
+        $("#users-dropdown").click();
+    }
     data = JSON.parse(data);
     for (var i = 0; i < data.length; i++) {
         $("#nav-accounts-dropdown").append(

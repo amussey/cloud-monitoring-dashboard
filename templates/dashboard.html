@@ -5,16 +5,56 @@
     .status-circle {
         margin-bottom: 10px;
     }
+
+    .right-inner-addon {
+        position: relative;
+        margin-top: 8px;
+        margin-bottom: 4px;
+        float: right;
+    }
+
+    .right-inner-addon input {
+        padding-right: 30px;
+    }
+
+    .right-inner-addon i {
+        position: absolute;
+        right: 0px;
+        padding: 10px 12px;
+        pointer-events: none;
+    }
+
+    .right-filter-save {
+        float: right;
+        margin-top: 8px;
+        margin-left: 8px
+    }
+
+    @media (max-width: 768px) {
+        .right-inner-addon {
+            float: none;
+        }
+    }
 </style>
 {% endblock %}
 {% block right_nav %}
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
+                <div class="right-filter-save hidden-xs">
+                    <button type="button" class="btn btn-default" id="filter-save-btn">Save Filter</button>
+                </div>
                 <div class="right-inner-addon">
                     <i class="fa fa-search"></i>
                     <input type="search" class="form-control"  placeholder="Filter Results" id="search-bar" name="search-bar" />
                 </div>
             </ul>
+{% endblock %}
+{% block left_nav %}
+                    <li>
+                        <a href="javascript:;" data-toggle="collapse" data-target="#nav-filters-dropdown" id="filters-dropdown"><i class="fa fa-fw fa-search"></i> Saved Filters <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul class="collapse" id="nav-filters-dropdown">
+                        </ul>
+                    </li>
 {% endblock %}
 {% block content %}
             <div class="container-fluid" id="dashboard-panel">

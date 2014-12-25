@@ -18,3 +18,6 @@ if not REDIS.get('tokens'):
 
 if not REDIS.get('monitors'):
     REDIS.set('monitors', json.dumps({}))
+
+if not REDIS.get('filters'):
+    REDIS.set('filters', json.dumps([]))

@@ -193,6 +193,46 @@ def api_server(username=None, server_id=None):
     return json.dumps({'response': 'error', 'message': "Server with 'server_id' not found."}), 403
 
 
+@app.route('/api/v1/filters', methods=['GET', 'POST', 'DELETE'])
+@crossdomain(origin='*')
+def api_filters():
+    filters = json.loads(config.REDIS.get('filters'))
+    if request.method == 'GET':
+        return json.dumps({
+            'response': 'success',
+            'message': 'Filters retrieved successfully.',
+            'data': filters
+        })
+    elif request.method == 'POST':
+        params = request.form.to_dict()
+        if not params.get('filter'):
+            return json.dumps({'response': 'error', 'message': "Unable to add new filter.  Missing 'filter' field in request POST."}), 403
+
+        if params.get('filter') not in filters:
+            filters.append(params.get('filter'))
+            config.REDIS.set('filters', json.dumps(filters))
+
+        return json.dumps({
+            'response': 'success',
+            'message': 'Filters stored successfully.',
+            'data': filters
+        })
+    else:
+        params = request.form.to_dict()
+        if not params.get('filter'):
+            return json.dumps({'response': 'error', 'message': "Unable to add new filter.  Missing 'filter' field in request POST."}), 403
+
+        if params.get('filter') in filters:
+            filters.remove(params.get('filter'))
+            config.REDIS.set('filters', json.dumps(filters))
+
+        return json.dumps({
+            'response': 'success',
+            'message': 'Filters removed successfully.',
+            'data': filters
+        })
+
+
 @app.errorhandler(405)
 def method_not_allowed(e):
     return json.dumps(
