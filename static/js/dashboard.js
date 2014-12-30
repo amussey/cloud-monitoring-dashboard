@@ -14,14 +14,38 @@ $(document).ready(function() {
     }, false);
 
     refreshMonitors();
-    window.setInterval(refreshMonitors, 60000);
+    window.setInterval(refreshMonitors, 20000);
+
 
     $("#search-bar").change(function() {
-        console.debug("Changed!");
+        if (DEBUG) {
+            console.debug("Changed!");
+        }
         filterMonitors($("#search-bar").val());
     });
 
+
+    $("#filter-save-btn").on("click", function(e) {
+        $("#search-bar").prop("disabled", true);
+
+        $.post( "/api/v1/filters", { filter: $("#search-bar").val() }, function(data) {
+            // Re-enable the buttons
+            $("#search-bar").prop("disabled", false);
+
+            $.get("/api/v1/filters", function(data) {
+                $(document).trigger("filters-ready", data);
+            })
+
+        });
+    });
+
+
+    $("#filter-clear-btn").on("click", function(e) {
+        $("#search-bar").val("");
+        filterMonitors($("#search-bar").val());
+    });
 });
+
 
 $(document).on("filters-ready", function(e, data) {
     if ($("#filters-dropdown").prop("open") == undefined || !$("#filters-dropdown").prop("open")) {
@@ -44,10 +68,12 @@ $(document).on("filters-ready", function(e, data) {
     }
 });
 
+
 function refreshMonitors() {
-    var url = "/api/v1/monitors?small";
+    var url_params = "?small&fast"
+    var url = "/api/v1/monitors" + url_params;
     if (username != undefined) {
-        url = "/api/v1/monitors/" + username + "?small";
+        url = "/api/v1/monitors/" + username + url_params;
     }
     $.get(url, function(data) {
         response = JSON.parse(data);
@@ -73,9 +99,12 @@ function refreshMonitors() {
     });
 }
 
+
 function renderMonitors(user, alarms) {
     var id = "#user-" + user;
-    console.debug("Refreshing " + user + "'s servers...");
+    if (DEBUG) {
+        console.debug("Refreshing " + user + "'s servers...");
+    }
     $(id).empty();
     for (var i = 0; i < alarms.values.length; i++) {
         $(id).append(
@@ -91,8 +120,11 @@ function renderMonitors(user, alarms) {
     }
 }
 
+
 function filterMonitors(search) {
-    console.debug("Filtering for: " + search);
+    if (DEBUG) {
+        console.debug("Filtering for: " + search);
+    }
 
     search = search.trim();
     if (search == "") {
@@ -115,17 +147,3 @@ function filterMonitors(search) {
     }
     $(window).trigger('resize');
 }
-
-$("#filter-save-btn").on("click", function(e) {
-    $("#search-bar").prop("disabled", true);
-
-    $.post( "/api/v1/filters", { filter: $("#search-bar").val() }, function(data) {
-        // Re-enable the buttons
-        $("#search-bar").prop("disabled", false);
-
-        $.get("/api/v1/filters", function(data) {
-            $(document).trigger("filters-ready", data);
-        })
-
-    });
-});

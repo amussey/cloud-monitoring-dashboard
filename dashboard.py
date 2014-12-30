@@ -1,6 +1,7 @@
 import json
 import time
 import requests
+from threading import Thread
 from flask import Flask, render_template, request, redirect, url_for
 
 import config
@@ -9,7 +10,7 @@ from utils import crossdomain, api as api_helpers
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-app.current_threads = 0
+app.thread_count = 0
 
 
 @app.route('/')
@@ -132,7 +133,6 @@ def api_auth(username=None):
 @app.route('/api/v1/monitors/<username>')
 @crossdomain(origin='*')
 def api_monitors(username=None):
-    # https://monitoring.api.rackspacecloud.com/v1.0/010101/views/overview
     params = request.args.to_dict()
 
     accounts = json.loads(config.REDIS.get('accounts'))
@@ -141,24 +141,16 @@ def api_monitors(username=None):
 
     api_auth(username)
 
-    if 'fast' not in params:
+    if 'fast' in params:
+        # Fire the updater in a background thread.
         for account in accounts:
             current_user = account['username']
             if tokens.get(current_user) and (not username or current_user == username):
-                token = tokens.get(current_user)
-                url = 'https://monitoring.api.rackspacecloud.com/v1.0/{tenant}/views/overview'.format(tenant=token['tenant'])
-                headers = {'X-Auth-Token': token['token']}
-                response = requests.get(url, headers=headers)
-
-                if response.status_code == 200:
-                    monitor_set = api_helpers.clean_monitoring_response(response.json())
-
-                    monitors[current_user] = {
-                        'status': 'success',
-                        'last_update': int(time.time()),
-                        'values': monitor_set
-                    }
-        config.REDIS.set('monitors', json.dumps(monitors))
+                if monitors[current_user].get('last_update', 0) + 59 < int(time.time()):
+                    t = Thread(target=api_helpers.update_monitoring_data, args=(current_user,))
+                    t.start()
+    else:
+        api_helpers.update_monitoring_data(username)
 
     if 'small' in params:
         return json.dumps(api_helpers.small_monitoring_response(monitors, username))

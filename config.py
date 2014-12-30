@@ -21,3 +21,5 @@ if not REDIS.get('monitors'):
 
 if not REDIS.get('filters'):
     REDIS.set('filters', json.dumps([]))
+
+monitoring_api_url = 'https://monitoring.api.rackspacecloud.com/v1.0/{tenant}/views/overview'

@@ -1,5 +1,7 @@
 import time
 import requests
+import config
+import json
 
 
 def expire_tokens(tokens):
@@ -12,6 +14,30 @@ def expire_tokens(tokens):
 
             del tokens[key]
     return tokens
+
+
+def update_monitoring_data(username=None):
+    accounts = json.loads(config.REDIS.get('accounts'))
+    tokens = json.loads(config.REDIS.get('tokens'))
+    monitors = json.loads(config.REDIS.get('monitors'))
+
+    for account in accounts:
+        current_user = account['username']
+        if tokens.get(current_user) and (not username or current_user == username):
+            token = tokens.get(current_user)
+            url = config.monitoring_api_url.format(tenant=token['tenant'])
+            headers = {'X-Auth-Token': token['token']}
+            response = requests.get(url, headers=headers)
+
+            if response.status_code == 200:
+                monitor_set = clean_monitoring_response(response.json())
+
+                monitors[current_user] = {
+                    'status': 'success',
+                    'last_update': int(time.time()),
+                    'values': monitor_set
+                }
+    config.REDIS.set('monitors', json.dumps(monitors))
 
 
 # Clean the response from monitoring and remove unnecessary information.

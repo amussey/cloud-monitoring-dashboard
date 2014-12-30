@@ -1,3 +1,5 @@
+var DEBUG = false;
+
 $(document).ready(function() {
     $.get("/api/v1/accounts", function(data) {
         $(document).trigger("accounts-ready", data);
