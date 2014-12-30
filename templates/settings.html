@@ -3,7 +3,11 @@
 {% block css %}
 <style>
     .remove-icon {
-        color:#B22020;
+        color: #B22020;
+    }
+
+    #current-filters {
+        margin-bottom: 50px;
     }
 </style>
 {% endblock %}
@@ -55,6 +59,18 @@
                     </div>
                 </div>
                 <!-- /.row -->
+
+                <div class="row" style="margin-top:30px;">
+                    <h2>Edit Filters</h2>
+                </div>
+                <table class="table" id="current-filters">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Filter</th>
+                    </tr>
+                    </thead>
+                </table>
 
             </div>
             <!-- /.container-fluid -->
