@@ -6,6 +6,24 @@ A dashboard for Rackspace's Cloud Monitoring.   See the statuses of the alerts o
 
 ![](https://raw.githubusercontent.com/amussey/cloud-monitoring-dashboard/master/static/images/screenshot-dashboard.png)
 
+## API (v1)
+
+The v1 API is accessible at `<Your Dashboard URL>/api/v1/`.  The following calls can be made against the API:
+
+| Call | Method | Required Parameters | Optional Parameters | Description |
+|------|--------|--------|--------|--------|
+| `/accounts`            | `GET`    |                        |         | List the accounts currently on the dashboard. |
+| `/accounts`            | `POST`   | `username`, `apikey`   | `alias` | Add a new account to the dashboard. |
+| `/accounts`            | `DELETE` | `username` or `apikey` |         | Remove an account from the dashboard. |
+| `/auth`                | `GET`    |                        |         | Retrieve the authentication status of all users.  Refreshes the auth information if it is out of date. |
+| `/auth/<username>`     | `GET`    |                        |         | Retrieve the authentication status of a particular user.  Refreshes the auth information if it is out of date. |
+| `/monitors`            | `GET`    |                        | `fast` (pull the response from the Redis cache) | Retrieve all of the configured Cloud Monitoring alerts. |
+| `/monitors/<username>` | `GET`    |                        | `fast` (pull the response from the Redis cache) | Retrieve all of the configured Cloud Monitoring alerts for a particular user. |
+| `/monitors/<username>/<server id>` | `GET` | | | Retrieve detailed information about the Cloud Monitoring alerts for a particular server. |
+| `/filters`             | `GET`    |                        |         | List the filters currently on the dashboard. |
+| `/filters`             | `POST`   | `filter`               |         | Add a new filter to the dashboard. |
+| `/filters`             | `DELETE` | `filter`               |         | Remove a filter from the dashboard. |
+
 ## Launching on Heroku
 
 ```bash
