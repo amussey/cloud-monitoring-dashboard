@@ -3,6 +3,7 @@ import time
 import requests
 from threading import Thread
 from flask import Flask, render_template, request, redirect, url_for
+from flask.ext import htauth
 
 import config
 from utils import crossdomain, api as api_helpers
@@ -12,19 +13,28 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')
 app.thread_count = 0
 
+if config.AUTH_ENABLED:
+    app.config['HTAUTH_HTPASSWD_PATH'] = config.HTPASSWD
+    app.config['HTAUTH_REALM'] = 'Authentication required.'
+
+    auth = htauth.HTAuth(app)
+
 
 @app.route('/')
 @app.route('/<username>')
+@htauth.authenticated
 def dashboard(username=None):
     return render_template('dashboard.html', username=username)
 
 
 @app.route('/settings')
+@htauth.authenticated
 def settings(username=None):
     return render_template('settings.html', username=username)
 
 
 @app.route('/<username>/<server_id>')
+@htauth.authenticated
 def server(username=None, server_id=None):
     if not server_id:
         return dashboard(username=username)
@@ -32,12 +42,14 @@ def server(username=None, server_id=None):
 
 
 @app.route('/api/v1/')
+@htauth.authenticated
 def api():
     return redirect(url_for('dashboard'))
 
 
 @app.route('/api/v1/accounts', methods=['GET', 'POST', 'DELETE'])
 @crossdomain(origin='*')
+@htauth.authenticated
 def api_accounts():
     accounts = json.loads(config.REDIS.get('accounts'))
     if request.method == 'DELETE':
@@ -89,6 +101,7 @@ def api_accounts():
 @app.route('/api/v1/auth')
 @app.route('/api/v1/auth/<username>')
 @crossdomain(origin='*')
+@htauth.authenticated
 def api_auth(username=None):
     accounts = json.loads(config.REDIS.get('accounts'))
     tokens = json.loads(config.REDIS.get('tokens'))
@@ -132,6 +145,7 @@ def api_auth(username=None):
 @app.route('/api/v1/monitors')
 @app.route('/api/v1/monitors/<username>')
 @crossdomain(origin='*')
+@htauth.authenticated
 def api_monitors(username=None):
     params = request.args.to_dict()
 
@@ -165,6 +179,7 @@ def api_monitors(username=None):
 
 @app.route('/api/v1/monitors/<username>/<server_id>')
 @crossdomain(origin='*')
+@htauth.authenticated
 def api_server(username=None, server_id=None):
     if not server_id:
         return api_monitors(username=username)
@@ -187,6 +202,7 @@ def api_server(username=None, server_id=None):
 
 @app.route('/api/v1/filters', methods=['GET', 'POST', 'DELETE'])
 @crossdomain(origin='*')
+@htauth.authenticated
 def api_filters():
     filters = json.loads(config.REDIS.get('filters'))
     if request.method == 'GET':
@@ -226,6 +242,7 @@ def api_filters():
 
 
 @app.errorhandler(405)
+@htauth.authenticated
 def method_not_allowed(e):
     return json.dumps(
         {

@@ -23,3 +23,9 @@ if not REDIS.get('filters'):
     REDIS.set('filters', json.dumps([]))
 
 monitoring_api_url = 'https://monitoring.api.rackspacecloud.com/v1.0/{tenant}/views/overview'
+
+if os.environ.get('HTPASSWD'):
+    AUTH_ENABLED = True
+    HTPASSWD = os.path.join(os.path.abspath(os.path.dirname(__file__)), os.environ.get('HTPASSWD'))
+else:
+    AUTH_ENABLED = False
