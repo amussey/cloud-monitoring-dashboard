@@ -6,6 +6,7 @@ A dashboard for Rackspace's Cloud Monitoring.   See the statuses of the alerts o
 
 ![](https://raw.githubusercontent.com/amussey/cloud-monitoring-dashboard/master/static/images/screenshot-dashboard.png)
 
+
 ## API (v1)
 
 The v1 API is accessible at `<Your Dashboard URL>/api/v1/`.  The following calls can be made against the API:
@@ -23,6 +24,24 @@ The v1 API is accessible at `<Your Dashboard URL>/api/v1/`.  The following calls
 | `/filters`             | `GET`    |                                          | List the filters currently on the dashboard. |
 | `/filters`             | `POST`   | `filter`                                 | Add a new filter to the dashboard. |
 | `/filters`             | `DELETE` | `filter`                                 | Remove a filter from the dashboard. |
+
+
+## Authentication
+
+The Cloud Monitoring dashboard supports basic HTTP authentication.  To enable this, [generate an `.htpasswd` file](http://httpd.apache.org/docs/2.2/programs/htpasswd.html) and add it to your repo.  After deploying to Heroku, run the command:
+
+```
+heroku config:set HTPASSWD="Your .htpasswd filename"
+```
+
+Authentication will then be enabled.
+
+To disable authentication, run the command:
+
+```
+heroku config:unset HTPASSWD
+```
+
 
 ## Launching on Heroku
 
