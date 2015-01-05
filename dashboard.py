@@ -14,9 +14,6 @@ app.config.from_pyfile('config.py')
 app.thread_count = 0
 
 if config.AUTH_ENABLED:
-    app.config['HTAUTH_HTPASSWD_PATH'] = config.HTPASSWD
-    app.config['HTAUTH_REALM'] = 'Authentication required.'
-
     auth = htauth.HTAuth(app)
 
 

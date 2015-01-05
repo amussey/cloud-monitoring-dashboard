@@ -26,6 +26,7 @@ monitoring_api_url = 'https://monitoring.api.rackspacecloud.com/v1.0/{tenant}/vi
 
 if os.environ.get('HTPASSWD'):
     AUTH_ENABLED = True
-    HTPASSWD = os.path.join(os.path.abspath(os.path.dirname(__file__)), os.environ.get('HTPASSWD'))
+    HTAUTH_REALM = 'Authentication required'
+    HTAUTH_HTPASSWD_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), os.environ.get('HTPASSWD'))
 else:
     AUTH_ENABLED = False
